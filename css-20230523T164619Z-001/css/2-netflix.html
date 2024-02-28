@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+  <script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+  <script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf";
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap";
+  </script>
+  <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+  <script>
+    const client = stitch.Stitch.initializeDefaultAppClient("azuremediaservices-tlsjv");
+    const mongodb = client.getServiceClient(stitch.RemoteMongoClient.factory, "mongodb-atlas");
+    const db = mongodb.db("sample_azure_media_services");
+
+    function displayVideos() {
+      db.collection("medias")
+        .find({ "team": "team03", "title": "TEAM 03 - Video 1" })
+        .toArray()
+        .then(docs => {
+          var html = "";
+          for (j = 0; j < docs.length; j++) {
+            var result = '<div class="video-container">';
+            result += '<video id="' + docs[j]._id + '" class="azuremediaplayer amp-default-skin" autoplay="autoplay" controls width="100%" height="100%" poster="/tradium.jpeg">';
+            result += '<source src="" type="application/vnd.ms-sstr+xml" />';
+            result += '<p class="amp-no-js">';
+            result += 'To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video';
+            result += '</p>';
+            result += '</video>';
+            result += '</div>';
+            document.getElementById("videos").innerHTML += result;
+          }
+          for (j = 0; j < docs.length; j++) {
+            var myPlayer = amp('' + docs[j]._id + '', {
+              techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS", "silverlightSS", "html5"],
+              "nativeControlsForTouch": false,
+              autoplay: true,
+              controls: false,
+              width: "100%",
+              height: "100%",
+              poster: docs[j].poster
+            }, function () {
+              console.log('Good to go!');
+              this.addEventListener('ended', function () {
+                console.log('Finished!');
+                this.currentTime = 0;
+                this.poster = "/tradium.jpeg";
+              });
+              this.addEventListener('pause', function () {
+                console.log('Paused!');
+                this.poster = "/tradium.jpeg";
+              });
+            });
+            myPlayer.src([{
+              src: docs[j].url,
+              type: "application/vnd.ms-sstr+xml"
+            }]);
+            setTimeout(function() {
+              myPlayer.pause();
+            }, 10000);
+            myPlayer.play(); // Agrega esta línea para reproducir automáticamente
+          }
+        });
+    }
+
+    function displayVideosOnLoad() {
+      client.auth
+        .loginWithCredential(new stitch.AnonymousCredential())
+        .then(displayVideos)
+        .catch(console.error);
+    }
+  </script>
+  <link rel="stylesheet" href="3-master.css">
+  <style>
+    /* Estilos omitidos para mayor concisión */
+  </style>
+</head>
+<body onload="displayVideosOnLoad()">
+  <!-- Elementos HTML omitidos para mayor concisión -->
+</body>
+</html>

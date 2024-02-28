@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.usuariolol {
+  display: flex;
+  align-items: center;
+  margin-right: 0px;
+}
+
+.usuariolol img {
+  width: 36px;
+  height: 36px;
+}
+
+#videos {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.contenedor-de-video {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.barranavegación {
+  position: fixed;
+  top: 0;
+  left: 30;
+  right: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  height: 51px;
+}
+
+.barranavegación button { 
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 18px;
+  margin: 0 2px;
+}
+
+.barranavegación button:hover,
+.barranavegación button:focus {
+  color: lightgray;
+}
+
+
+
+.barranavegación .search-box {
+  margin-left: auto;
+  margin-right: 10px;
+  position: relative;
+}
+
+.barranavegación .search-box input {
+  width: 180px;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 16px;
+  border: none;
+  outline: none;
+}
+
+.botones2 {
+  font-size: 20px;
+  padding: 10px;
+  margin-left: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.botones2:hover {
+  color: lightgray;
+}
+
+@media screen and (max-width: 600px) {
+  .barranavegación {
+    justify-content: center;
+  }
+
+  .barranavegación .search-box {
+    display: none;
+  }
+
+  .barranavegación button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

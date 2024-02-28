@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Media Streaming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+  <script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+  <script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf";
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap";
+  </script>
+  <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+  <script>
+      // Initialize the App Client
+      const client = stitch.Stitch.initializeDefaultAppClient("azuremediaservices-tlsjv");
+      // Get a MongoDB Service Client
+      const mongodb = client.getServiceClient(
+          stitch.RemoteMongoClient.factory,
+          "mongodb-atlas"
+      );
+      // Get a reference to the music database
+      const db = mongodb.db("sample_azure_media_services");
+
+      // Function display videos
+      function displayVideos() {
+          db.collection("medias")
+              .find({ "category": "Documentales"})
+              .toArray()
+              .then(docs => {
+                  var html = "";
+                  for (j = 0; j < docs.length; j++) {
+                      var result = "";
+                      result = result + '<video id="'+ docs[j]._id +'" class="azuremediaplayer amp-default-skin" autoplay controls width="640" height="400" poster=' + docs[j].poster + '>';
+                      result = result + '<source src="" type="application/vnd.ms-sstr+xml" />';
+                      result = result + '<p class="amp-no-js">';
+                      result = result + 'To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video';
+                      result = result + '</p>';
+                      result = result + '</video>';
+                      document.getElementById("videos").innerHTML += result;    
+                  }
+                  for (j = 0; j < docs.length; j++) {
+                      var myPlayer = amp(''+ docs[j]._id + '', { /* Options */
+                      techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS","silverlightSS", "html5"],
+                      "nativeControlsForTouch": false,
+                      autoplay: false,
+                      controls: true,
+                      width: "640",
+                      height: "400",
+                      /* poster: "league-of-legends.jpg" */
+                      }, function() {
+                      console.log('Good to go!');
+                      // add an event listener
+                      this.addEventListener('ended', function() {
+                      console.log('Finished!');
+                      });
+                      }
+                      );
+                      myPlayer.src([{
+                      src: docs[j].url,
+                      type: "application/vnd.ms-sstr+xml"
+                      }]);
+                  }
+              });
+              displayVideos2();
+      }
+      function displayVideos2() {
+          db.collection("medias")
+              .find({ "category": "accion"})
+              .toArray()
+              .then(docs => {
+                  var html = "";
+                  for (j = 0; j < docs.length; j++) {
+                      var result = "";
+                      result = result + '<video id="'+ docs[j]._id +'" class="azuremediaplayer amp-default-skin" autoplay controls width="640" height="400" poster=' + docs[j].poster + '>';
+                      result = result + '<source src="" type="application/vnd.ms-sstr+xml" />';
+                      result = result + '<p class="amp-no-js">';
+                      result = result + 'To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video';
+                      result = result + '</p>';
+                      result = result + '</video>';
+                      document.getElementById("videosac").innerHTML += result;    
+                  }
+                  for (j = 0; j < docs.length; j++) {
+                      var myPlayer = amp(''+ docs[j]._id + '', { /* Options */
+                      techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS","silverlightSS", "html5"],
+                      "nativeControlsForTouch": false,
+                      autoplay: false,
+                      controls: true,
+                      width: "640",
+                      height: "400",
+                      /* poster: "league-of-legends.jpg" */
+                      }, function() {
+                      console.log('Good to go!');
+                      // add an event listener
+                      this.addEventListener('ended', function() {
+                      console.log('Finished!');
+                      });
+                      }
+                      );
+                      myPlayer.src([{
+                      src: docs[j].url,
+                      type: "application/vnd.ms-sstr+xml"
+                      }]);
+                  }
+              });
+              displayVideos3();
+      }
+      function displayVideos3() {
+          db.collection("medias")
+              .find({ "category": "Terror"})
+              .toArray()
+              .then(docs => {
+                  var html = "";
+                  for (j = 0; j < docs.length; j++) {
+                      var result = "";
+                      result = result + '<video id="'+ docs[j]._id +'" class="azuremediaplayer amp-default-skin" autoplay controls width="640" height="400" poster=' + docs[j].poster + '>';
+                      result = result + '<source src="" type="application/vnd.ms-sstr+xml" />';
+                      result = result + '<p class="amp-no-js">';
+                      result = result + 'To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video';
+                      result = result + '</p>';
+                      result = result + '</video>';
+                      document.getElementById("videoster").innerHTML += result;    
+                  }
+                  for (j = 0; j < docs.length; j++) {
+                      var myPlayer = amp(''+ docs[j]._id + '', { /* Options */
+                      techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS","silverlightSS", "html5"],
+                      "nativeControlsForTouch": false,
+                      autoplay: false,
+                      controls: true,
+                      width: "640",
+                      height: "400",
+                      /* poster: "league-of-legends.jpg" */
+                      }, function() {
+                      console.log('Good to go!');
+                      // add an event listener
+                      this.addEventListener('ended', function() {
+                      console.log('Finished!');
+                      });
+                      }
+                      );
+                      myPlayer.src([{
+                      src: docs[j].url,
+                      type: "application/vnd.ms-sstr+xml"
+                      }]);
+                  }
+              });
+              displayVideos4();
+      }
+      function displayVideos4() {
+          db.collection("medias")
+              .find({ "category": "Comedias"})
+              .toArray()
+              .then(docs => {
+                  var html = "";
+                  for (j = 0; j < docs.length; j++) {
+                      var result = "";
+                      result = result + '<video id="'+ docs[j]._id +'" class="azuremediaplayer amp-default-skin" autoplay controls width="640" height="400" poster=' + docs[j].poster + '>';
+                      result = result + '<source src="" type="application/vnd.ms-sstr+xml" />';
+                      result = result + '<p class="amp-no-js">';
+                      result = result + 'To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video';
+                      result = result + '</p>';
+                      result = result + '</video>';
+                      document.getElementById("videoscom").innerHTML += result;    
+                  }
+                  for (j = 0; j < docs.length; j++) {
+                      var myPlayer = amp(''+ docs[j]._id + '', { /* Options */
+                      techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS","silverlightSS", "html5"],
+                      "nativeControlsForTouch": false,
+                      autoplay: false,
+                      controls: true,
+                      width: "640",
+                      height: "400",
+                      /* poster: "league-of-legends.jpg" */
+                      }, function() {
+                      console.log('Good to go!');
+                      // add an event listener
+                      this.addEventListener('ended', function() {
+                      console.log('Finished!');
+                      });
+                      }
+                      );
+                      myPlayer.src([{
+                      src: docs[j].url,
+                      type: "application/vnd.ms-sstr+xml"
+                      }]);
+                  }
+              });
+      }
+
+      // Function execute on load
+      function displayVideosOnLoad() {
+          client.auth
+              .loginWithCredential(new stitch.AnonymousCredential())
+              .then(displayVideos)
+              .catch(console.error);
+      }
+  </script>
+  <link rel="stylesheet" href="master.css">
+</head>
+<body onload="displayVideosOnLoad()" >
+  <div class="barranavegación">
+    <a href="1-Inicio.html" style="margin-right: 14px;"><img id="imgnetflix" src="https://th.bing.com/th/id/R.4d30a09d38e6dfe3feaa31920a680108?rik=GnWkgmKvj5nwNg&riu=http%3a%2f%2fwww.cultjer.com%2fimg%2fug_photo%2f2016_09%2f76248820160921034356.jpg&ehk=grD%2fdqb%2b43FMvO3KHmAdPwgUvOikuZkwrJQwMPdCHUM%3d&risl=&pid=ImgRaw&r=0" alt="Netflix" width="100px" height="100px"></a>
+    <div class="button-container">
+      <button href="#Docu">Documentales</button>
+      <button>Acción</button>
+      <button>Terror</button>
+      <button>Comedias</button>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="Buscar..." name="busqueda" />
+      <button class="botones2" onclick="filterVideos()">🔎</button>
+    </div>
+    <button class="botones2" onclick="filterVideos()">🔔</button>
+    <button class="usuariolol"><img src="https://th.bing.com/th/id/R.0691e7e83509b094208ee7cc59751adf?rik=KmhW5Drrn0wcsA&riu=http%3a%2f%2fis5.mzstatic.com%2fimage%2fthumb%2fPurple3%2fv4%2ff5%2f8b%2ffe%2ff58bfe8f-2ae0-4160-22f2-9d6988754d16%2fsource%2f1024x1024sr.jpg&ehk=UOj2yHPxvP1mi%2f8R%2fUuMcrePmXYKwvPramQCy%2frM%2bXI%3d&risl=&pid=ImgRaw&r=0" alt="Usuario" /></button>
+  </div>
+  <section id="Docu">
+    <p class="categoriasp">Documentales</p>
+  </section>
+  <div class="videosac" id="videos"></div>
+  <div>
+    <p class="categoriasp" id="Acc">Acción</p>
+  </div>
+  <div class="videosac" id="videosac"></div>
+  <div>
+    <p class="categoriasp" id="Terr">Terror</p>
+  </div>
+  <div class="videosac" id="videoster"></div>
+  <div>
+    <p class="categoriasp" id="Com">Comedias</p>
+  </div>
+  <div class="videosac" id="videoscom"></div>
+</body>
+</html>

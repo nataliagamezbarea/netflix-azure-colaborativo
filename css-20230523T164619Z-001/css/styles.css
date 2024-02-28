@@ -1,0 +1,75 @@
+<style>
+    @font-face {
+      font-family: "Supra Medium Mezzo";
+      src: url("/TIPOGRAFIA/Agane¦Ç 45 (light).ttf");
+    }
+    
+    body {
+      background: #141414;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center; /* Alinear contenido verticalmente al centro */
+      font-family: "Supra Medium Mezzo", Arial, sans-serif;
+      color: white;
+      font-size: 110%;
+    }
+
+    .center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .icon-container {
+      display: inline-block;
+      margin-top: -0.5vh;
+      position: relative;
+      width: 150px;
+      height: 150px;
+    }
+
+    .icon-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: border-color 0.3s;
+      border: 3px solid transparent;
+      border-radius: 10px;
+    }
+
+    .icon-container:hover img {
+      border-color: white;
+    }
+
+    .icon-container p {
+      color: gray;
+      transition: color 0.3s;
+      border: 1.5% solid white;
+      padding: 5px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px; /* Espacio superior para separar del borde */
+    }
+
+    .icon-container:hover p {
+      color: white;
+    }
+
+    h1 {
+      font-size: 50px;
+      position: relative;
+      top: -10px; /* Ajuste para subir el texto 10 píxeles */
+      font-weight: 400;
+      text-align: center;
+    }
+
+
+
+
+
+    
+  </style>

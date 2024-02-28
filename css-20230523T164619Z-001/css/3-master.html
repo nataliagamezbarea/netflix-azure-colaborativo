@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Media Streaming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+  <script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+  <script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf";
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap";
+  </script>
+  <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+  <script>
+    // Initialize the App Client
+    const client = stitch.Stitch.initializeDefaultAppClient("azuremediaservices-tlsjv");
+    // Get a MongoDB Service Client
+    const mongodb = client.getServiceClient(stitch.RemoteMongoClient.factory, "mongodb-atlas");
+    // Get a reference to the music database
+    const db = mongodb.db("sample_azure_media_services");
+
+    // Function to display videos
+    function displayVideos() {
+      db.collection("medias")
+        .find({ "team": "team03", "title": "TEAM 03 - Video 1" })
+        .toArray()
+        .then(docs => {
+          const videosContainer = document.getElementById("videos");
+          videosContainer.innerHTML = "";
+
+          for (let j = 0; j < docs.length; j++) {
+            const video = docs[j];
+            const videoElement = document.createElement("div");
+            videoElement.className = "contenedor-de-video";
+            videoElement.dataset.title = video.title.toLowerCase();
+
+            const videoPlayer = document.createElement("video");
+            videoPlayer.id = video._id;
+            videoPlayer.className = "azuremediaplayer amp-default-skin";
+            videoPlayer.autoplay = true;
+            videoPlayer.controls = false;
+            videoPlayer.width = "100%";
+            videoPlayer.height = "100%";
+            videoPlayer.poster = video.poster;
+
+            const source = document.createElement("source");
+            source.src = video.url;
+            source.type = "application/vnd.ms-sstr+xml";
+
+            const noJSMessage = document.createElement("p");
+            noJSMessage.className = "amp-no-js";
+            noJSMessage.textContent = "To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video";
+
+            videoPlayer.appendChild(source);
+            videoPlayer.appendChild(noJSMessage);
+            videoElement.appendChild(videoPlayer);
+            videosContainer.appendChild(videoElement);
+
+            const player = amp(video._id, {
+              techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS", "silverlightSS", "html5"],
+              nativeControlsForTouch: false,
+              autoplay: true,
+              controls: false,
+              width: "100%",
+              height: "100%",
+              poster: video.poster
+            }, function () {
+              console.log("Good to go!");
+              this.addEventListener("ended", function () {
+                console.log("Finished!");
+                this.currentTime = 0;
+                this.poster = "/tradium.jpeg";
+              });
+              this.addEventListener("pause", function () {
+                console.log("Paused!");
+                this.poster = "/tradium.jpeg";
+              });
+            });
+
+            player.src([{ src: video.url, type: "application/vnd.ms-sstr+xml" }]);
+            setTimeout(function() {
+              player.pause();
+            }, 10000);
+          }
+        });
+    }
+
+    function displayVideosOnLoad() {
+      client.auth
+        .loginWithCredential(new stitch.AnonymousCredential())
+        .then(displayVideos)
+        .catch(console.error);
+    }
+
+    function filterVideos() {
+      const searchInput = document.querySelector("input[name='busqueda']");
+      const searchValue = searchInput.value.toLowerCase();
+      const videosContainer = document.getElementById("videos");
+      const videos = videosContainer.getElementsByClassName("contenedor-de-video");
+
+      for (let i = 0; i < videos.length; i++) {
+        const video = videos[i];
+        const title = video.getAttribute("data-title").toLowerCase();
+
+        if (title.includes(searchValue)) {
+          video.style.display = "block";
+        } else {
+          video.style.display = "none";
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="3-master.css">
+</head>
+<body onload="displayVideosOnLoad()">
+  <div class="barranavegación">
+    <a href="netflix.html" style="margin-right: 14px;"><img src="./FOTOS/icononetflix.png" alt="Netflix" width="100px" height="100px"></a>
+    <button onclick="window.location.href = 'netflix.html';">Inicio</button>
+    <div class="button-container">
+      <button>Ver todos los videos</button>
+      <button>Ver solo mis videos</button>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="Buscar..." name="busqueda" />
+      <button class="botones2" onclick="filterVideos()">🔎</button>
+    </div>
+    <button class="botones2" onclick="filterVideos()">🔔</button>
+    <button class="usuariolol"><img src="./FOTOS/logousuario.png" alt="Usuario" /></button>
+  </div>
+  <div id="videos"></div>
+</body>
+</html>

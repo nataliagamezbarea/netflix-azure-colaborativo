@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Media Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+    <script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+    <script>amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf"
+        amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap"
+    </script>
+    <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.6.0/stitch.js"></script>
+    <script>
+      // Get query string parameters value
+      function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, '\\$&');
+          var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+      // Initialize the App Client
+      const client = stitch.Stitch.initializeDefaultAppClient("azuremediaservices-tlsjv");
+      // Get a MongoDB Service Client
+      const mongodb = client.getServiceClient(
+          stitch.RemoteMongoClient.factory,
+          "mongodb-atlas"
+      );
+      // Get a reference to the music database
+      const db = mongodb.db("sample_azure_media_services");
+
+      // Function display videos
+      function displayVideos() {
+        var id = getParameterByName('id');
+          db.collection("medias")
+              .find({ "_id": new stitch.BSON.ObjectId(id) })
+              .toArray()
+              .then(docs => {
+                  var html = "";
+                    var myPlayer = amp('vid1', { /* Options */
+                    techOrder: ["azureHtml5JS", "flashSS", "html5FairPlayHLS","silverlightSS", "html5"],
+                    "nativeControlsForTouch": false,
+                    autoplay: false,
+                    controls: true,
+                    width: "640",
+                    height: "400",
+                    poster: "tradium.jpeg"
+                    }, function() {
+                    console.log('Good to go!');
+                    // add an event listener
+                    this.addEventListener('ended', function() {
+                    console.log('Finished!');
+                    });
+                    }
+                    );
+                    myPlayer.src([{
+                    src: docs[0].url,
+                    type: "application/vnd.ms-sstr+xml"
+                    }]);
+              });
+      }
+      // Function execute on load
+      function displaVideosOnLoad() {
+          client.auth
+              .loginWithCredential(new stitch.AnonymousCredential())
+              .then(displayVideos)
+              .catch(console.error);
+      }
+    </script>
+  </head>
+  <body onload="displayVideosOnLoad()">
+    <video id="vid1" class="azuremediaplayer amp-default-skin" autoplay controls width="640" height="400" poster="tradium.jpeg">
+      <source src="" type="application/vnd.ms-sstr+xml" />
+      <p class="amp-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
+      </p>
+  </video>
+  </body>
+</html>
